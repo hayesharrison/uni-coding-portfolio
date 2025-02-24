@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 19 12:25:08 2021
 
-@author: hayes
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 from pandas import read_excel
