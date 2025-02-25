@@ -9,6 +9,7 @@ from sklearn.cluster import MeanShift
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 
+# Extract rows corresponding to Tecumseh plant
 tecumseh_lines = []
 dataset_plant = read_excel('Viscose Testing Log (Alex).xlsx', skiprows=1,usecols = [1])
 for line in dataset_plant.index:
@@ -21,7 +22,7 @@ for line in dataset_plant.index:
 
 
 
-
+# Read and clean chemical property data
 dataset_civ = read_excel('Viscose Testing Log (Alex).xlsx', skiprows=1,usecols = [25,26])
 
 for i in tecumseh_lines:
@@ -35,7 +36,7 @@ dataset_civ = dataset_civ.drop(labels=3798,axis = 0)
 data_civ = dataset_civ.to_numpy()
 
 
-
+# Read and clean pressure-related data
 dataset_pres = read_excel('Viscose Testing Log (Alex).xlsx', skiprows=1,usecols = [36,37])
 for i in tecumseh_lines:
     dataset_pres = dataset_pres.drop(labels=i,axis = 0)
@@ -45,6 +46,7 @@ dataset_pres['Press Hemi'].replace('', np.nan, inplace=True)
 dataset_pres.dropna(subset=['Press Hemi'], inplace=True)
 data_pres = dataset_pres.to_numpy()
 
+# Read and clean HR and BFV data
 dataset_HR = read_excel('Viscose Testing Log (Alex).xlsx', skiprows=1,usecols = [0,28,29])
 for i in tecumseh_lines:
     dataset_HR = dataset_HR.drop(labels=i,axis = 0)
@@ -54,7 +56,7 @@ dataset_HR['BFV (S)'].replace('', np.nan, inplace=True)
 dataset_HR.dropna(subset=['BFV (S)'], inplace=True)
 data_HR = dataset_HR.to_numpy()
 
-
+# Read and clean BFV and Rv data
 dataset_BFV = read_excel('Viscose Testing Log (Alex).xlsx', skiprows=1,usecols = [29,30])
 for i in tecumseh_lines:
     dataset_BFV = dataset_BFV.drop(labels=i,axis = 0)
@@ -67,6 +69,7 @@ dataset_BFV['Rv'].replace('', np.nan, inplace=True)
 dataset_BFV.dropna(subset=['Rv'], inplace=True)
 data_BFV = dataset_BFV.to_numpy()
 
+# Read and clean CIAC data
 dataset_CIAC = read_excel('Viscose Testing Log (Alex).xlsx', skiprows=1,usecols = [23,24])
 for i in tecumseh_lines:
     dataset_CIAC = dataset_CIAC.drop(labels=i,axis = 0)
@@ -75,7 +78,8 @@ dataset_CIAC.dropna(subset=['CiAC (%)'], inplace=True)
 dataset_CIAC['SiAC (%)'].replace('', np.nan, inplace=True)
 dataset_CIAC.dropna(subset=['SiAC (%)'], inplace=True)
 data_CIAC = dataset_CIAC.to_numpy()
-              
+
+# Check for ranged values in 'SiV (%)' column
 for line in dataset_civ.index:
     try:
         if '-' in dataset_civ['SiV (%).1'][line]:
@@ -84,8 +88,9 @@ for line in dataset_civ.index:
     except TypeError:
         continue
 
-
+# Clustering function
 def cluster(X):
+    """Performs KMeans clustering and visualizes clusters."""
     model = KMeans(n_clusters =2 )
     model.fit(X)
     yhat = model.fit_predict(X)
@@ -101,7 +106,10 @@ def cluster(X):
     
 scores = []
 std_errors = []
+
+# Machine learning function
 def machine_learning(X,Y,model):
+    """Applies machine learning regression and calculates R-squared score distribution."""
     seeds = np.arange(43)
     for seed in seeds:
         X_train, X_validation, Y_train, Y_validation = train_test_split(X,Y,test_size=0.30,random_state=seed)
@@ -119,7 +127,8 @@ def machine_learning(X,Y,model):
     print(error_avg)
 
     return scores_avg
-
+    
+# Identify rows without 'Churn' in the 'Origin' column
 blender_lines = []
 for line in dataset_HR.index:
     try:
