@@ -17,7 +17,11 @@ from numpy import unique
 from numpy import where
 from sklearn.cluster import KMeans
 
-
+"""
+This script processes mechanical property data from an Excel file, 
+applies clustering and machine learning models, and visualizes relationships 
+between mechanical properties.
+"""
     
 
 
@@ -70,6 +74,7 @@ def peek_plots(td,md):
     pyplot.show()
 
 def strength_vs_youngs(X,Y,X_err,Y_err):
+    """Plots strength vs. Young's modulus with linear regression and error bars."""
     m, b = np.polyfit(X, Y, 1)
     plt.plot(X, Y, 'x')
     plt.plot(X, m*X + b)
@@ -82,6 +87,7 @@ def strength_vs_youngs(X,Y,X_err,Y_err):
     return plot
     
 def failure_vs_youngs(X,Y,X_err,Y_err):
+    """Plots failure vs. Young's modulus with linear regression and error bars."""
     m, b = np.polyfit(X, Y, 1)
     plt.plot(X, Y, 'x')
     plt.plot(X, m*X + b)
@@ -95,6 +101,7 @@ def failure_vs_youngs(X,Y,X_err,Y_err):
     return plot
 
 def ln_strength_vs_youngs(X,Y):
+    """Plots the natural log of strength vs. Young's modulus."""
     m, b = np.polyfit(X, Y, 1)
     plt.plot(X, Y, 'x')
     plt.plot(X, m*X + b)
@@ -113,6 +120,7 @@ def new_plot(X,Y):
     return plot
     
 def ln_failure_vs_youngs(X,Y):
+    """Plots the natural log of failure vs. Young's modulus."""
     m, b = np.polyfit(X, Y, 1)
     plt.plot(X, Y, 'x')
     plt.plot(X, m*X + b)
@@ -134,6 +142,7 @@ models.append(('SVR', SVR()))
 models.append(('Ridge',Ridge()))
 
 def model_tester(X,Y):
+    """Tests various regression models using cross-validation and prints R-squared scores."""
     X_train, X_validation, Y_train, Y_validation = train_test_split(X,Y,test_size=0.25,random_state=0)
     for name, model in models:
         kfold = KFold(n_splits=2, random_state=0,shuffle=True)
@@ -145,6 +154,7 @@ def model_tester(X,Y):
 scores = []
 std_errors = []
 def machine_learning(X,Y,model):
+    """Performs machine learning using different test/train splits and visualizes R-squared score distribution."""
     seeds = np.arange(43)
     for seed in seeds:
         X_train, X_validation, Y_train, Y_validation = train_test_split(X,Y,test_size=0.40,random_state=seed)
@@ -167,6 +177,7 @@ def machine_learning(X,Y,model):
     plt.show()
     return scores_avg
 def test_size(X,Y,model):
+    """Analyzes the impact of different test set sizes on R-squared score."""
     sizes = np.arange(0.10,0.95,0.05)
     r_squa = []
     std_error = []
@@ -183,6 +194,7 @@ def test_size(X,Y,model):
     plot = plt.show()
     
 def cluster(X):
+    """Performs KMeans clustering and visualizes clusters in the strength-failure data."""
     model = KMeans(n_clusters=2)
     model.fit(X)
     yhat = model.fit_predict(X)
@@ -218,7 +230,7 @@ def test_raw():
     plt.show()
 
 
-
+# Run machine learning models
 machine_learning(strength_failure, youngs_modulus, LinearRegression())
 machine_learning(strength_failure ,youngs_modulus,Ridge())
 
