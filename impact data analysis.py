@@ -10,6 +10,11 @@ from sklearn.cluster import MeanShift
 from numpy import unique
 from numpy import where
 
+# Load data from Excel file
+# Each dataset represents maximum extension, force, normalized energy, and modulus at different strain rates
+
+# Extracting data for different strain rates
+
 max_ext_1_raw = read_excel('project data.xlsx',skiprows=17,skipfooter= 35,usecols = [1,5,9,13,17,21,25,29])
 max_ext_1 = max_ext_1_raw.values
 max_ext_100_raw = read_excel('project data.xlsx',skiprows=24,skipfooter= 28,usecols = [1,5,9,13,17,21,25,29])
@@ -144,7 +149,7 @@ for line in mod_index_list:
 
 
 
-
+# Function to visualize puncture data by sample
 
 def puncture_plt_samples():
     fig, ax = plt.subplots()
@@ -160,6 +165,8 @@ def puncture_plt_samples():
     plt.ylabel('Max Force N/mm')
     ax.legend(loc='lower right', shadow=True, fontsize='x-small')
     plt.show()
+    
+# Function to visualize puncture data across different strain rates
 
 def puncture_plt(X,Y):
     fig, ax = plt.subplots()
@@ -172,8 +179,8 @@ def puncture_plt(X,Y):
     ax.legend(loc='lower right', shadow=True, fontsize='x-small')
     plt.show()
     
-    
-    
+
+# Function to apply clustering on the dataset 
 def cluster(X):
     model = KMeans(n_clusters=4)
     # fit the model
@@ -200,7 +207,7 @@ mod_force =  np.concatenate((mod_all,max_force_all),axis = 1)
 print(sample_pf_mod)
 
 
-
+# Execute clustering and plotting functions
 cluster(ext_mod)
 
 puncture_plt(ext_mod)
