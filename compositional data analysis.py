@@ -11,7 +11,7 @@ from matplotlib import pyplot
 from sklearn.model_selection import train_test_split
     
 
-
+# Load data from Excel files
 df_chem = read_excel('CompositionalData.xlsx',skiprows = 4,usecols = [0,1,2,3,4])
 df_mech = read_excel('CompositionalData.xlsx',skiprows = 4,usecols = [0,10,11,12])
 
@@ -166,7 +166,15 @@ for line in df_mech.index:
         new_break.append(float(df_mech["Elongation at Break (%)"][line]))
     except ValueError:
         new_break.append(0)
+
 def clustering(X,Y):
+    """
+    Performs KMeans clustering on the provided dataset and visualizes the clusters.
+
+    Args:
+        X (array): Independent variable(s) data.
+        Y (array): Dependent variable(s) data.
+    """
     values = np.concatenate([X[0:20].reshape(-1,1),Y[0:20].reshape(-1,1)],axis=1)
     model = KMeans(n_clusters=2)
     # fit the model
@@ -190,6 +198,14 @@ def clustering(X,Y):
 scores = []
 std_errors = []
 def machine_learning(X,Y,model):
+    """
+    Performs machine learning regression analysis using cross-validation.
+
+    Args:
+        X (array): Independent variable(s) data.
+        Y (array): Dependent variable(s) data.
+        model (sklearn model): The regression model (e.g., LinearRegression).
+    """
     seeds = np.arange(43)
     for seed in seeds:
         X_train, X_validation, Y_train, Y_validation = train_test_split(X,Y,test_size=0.40,random_state=seed)
@@ -205,7 +221,7 @@ def machine_learning(X,Y,model):
     scores_avg = np.mean(scores)
     print(scores_avg,"±",error_avg)
 
-
+# Convert lists to NumPy arrays
 cell_arr = np.array(new_cellulose)
 hemicell_arr = np.array(new_hemicellulose)
 
@@ -226,6 +242,9 @@ youngs_arr = np.delete(youngs_arr,8,0)
 
 
 def cluster(X):
+    """
+    Clusters the given data using KMeans and visualizes it.
+    """
     model = KMeans(n_clusters = 2)
     model.fit(X)
     yhat = model.fit_predict(X)
@@ -240,6 +259,9 @@ def cluster(X):
     pyplot.show()
     
 def scatter(dat):
+    """
+    Creates a scatter plot to visualize different material categories.
+    """
     fig, ax = plt.subplots()
     ax.plot(dat[0:11,0],dat[0:11,1], 'x',color = 'salmon',label = 'Bast')
     ax.plot(dat[11:19,0],dat[11:19,1], 'x',color = 'palegreen',label = 'Leaf')
@@ -254,6 +276,9 @@ def scatter(dat):
     plt.show()
 
 def impact_plot(X,Y):
+    """
+    Creates a linear regression plot showing the relationship between X and Y.
+    """
     m, b = np.polyfit(X, Y, 1)
     plt.plot(X,Y, 'x')
     plt.plot(X, m*X + b)
@@ -264,6 +289,7 @@ def impact_plot(X,Y):
     plot = plt.show()
     return plot
 
+# Prepare data for clustering and analysis
 cell_arr2 = np.delete(cell_arr,[8,24,26,31,32,33,34,35,36,37],0)
 hemicell_arr2 = np.delete(hemicell_arr,[8,24,26,31,32,33,34,35,36,37],0)
 cell_ym = np.concatenate((cell_arr2.reshape(-1,1),youngs_arr.reshape(-1,1)),axis=1)
@@ -279,7 +305,7 @@ hemicell_tens = np.concatenate((hemicell_arr3.reshape(-1,1),tens_arr.reshape(-1,
 
 
 
-
+# Execute clustering and machine learning models
 cluster(cell_tens)
 impact_plot(cell_arr3,tens_arr)
 machine_learning(cell_arr3.reshape(-1,1), tens_arr.reshape(-1,1), LinearRegression())
